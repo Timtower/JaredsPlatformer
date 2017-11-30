@@ -1,5 +1,7 @@
 package com.jaredscarito.jaredsplatformer.characters;
 
+import com.jaredscarito.jaredsplatformer.objects.GameObject;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -9,23 +11,24 @@ import java.awt.image.BufferedImage;
 public interface Character {
     int[] pointsX = null;
     int[] pointsY = null;
-    int[] allPoints = null;
-    int[] armPointsX = null;
-    int[] armPointsY = null;
+    int[] armPointsLeftX = null;
+    int[] armPointsLeftY = null;
+    int[] armPointsRightX = null;
+    int[] armPointsRightY = null;
+    int legsY = 0;
     boolean actionLocked = false;
     int speed = 1;
     boolean hidden = false;
     boolean isMoveable = false;
 
 
+    void startGravity();
+
+
     int[] getPointsX();
 
 
     int[] getPointsY();
-
-
-    int[] getAllPoints();
-
 
     boolean isActionLocked();
 
@@ -61,4 +64,8 @@ public interface Character {
     boolean collides(Shape shape);
 
     boolean collides(Shape shape, int pixels);
+
+    boolean collides(GameObject obj);
+
+    boolean collides(GameObject obj, int pixels);
 }
