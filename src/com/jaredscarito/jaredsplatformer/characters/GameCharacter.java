@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 /**
  * Created by user on 11/29/2017.
  */
-public interface Character {
+public interface GameCharacter {
     int[] pointsX = null;
     int[] pointsY = null;
     int[] armPointsLeftX = null;

@@ -1,5 +1,6 @@
 package com.jaredscarito.jaredsplatformer.main;
 
+import com.jaredscarito.jaredsplatformer.characters.GameCharacter;
 import com.jaredscarito.jaredsplatformer.characters.Meatboy;
 import com.jaredscarito.jaredsplatformer.draw.DrawableAdapter;
 import com.jaredscarito.jaredsplatformer.draw.GameBoard;
@@ -20,7 +21,7 @@ public class JaredsPerformer extends DrawableAdapter {
     public static void main(String[] args) {
         gb.setSize(650, 500);
         canvas = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);
-        fillCanvas(Color.CYAN);
+        fillCanvas(Color.BLACK);
         showGameBoard(gb);
     }
 
@@ -34,16 +35,18 @@ public class JaredsPerformer extends DrawableAdapter {
 
     private int currentStage = 1;
     private boolean started = false;
+    private GameCharacter charact = null;
     @Override
     public void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(canvas, null, null);
-        Meatboy meatboy;
-        if(!started) {
+        if(!this.started) {
             //Set start to true and draw the objects that can move:
-            meatboy = new Meatboy(35, 450, g, canvas, 20, true, Color.GRAY);
+            this.charact = new Meatboy(35, 450, g, canvas, 20, true, Color.GRAY);
+            this.started = true;
         }
         drawStage(this.currentStage, g);
+        this.charact.draw(g);
     }
 
     //Stage 1
@@ -52,6 +55,16 @@ public class JaredsPerformer extends DrawableAdapter {
             case 1:
                 RectShape rect = new RectShape(0, 470, Color.GRAY, 500, 30, g, canvas);
                 rect.draw(g);
+        }
+    }
+
+    //Keys
+    @Override
+    public void keyStruck(char c) {
+        switch (c) {
+            case 'W':
+                charact.moveRight();
+                break;
         }
     }
 }

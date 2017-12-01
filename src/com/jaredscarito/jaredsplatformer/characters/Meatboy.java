@@ -4,21 +4,13 @@ import com.jaredscarito.jaredsplatformer.objects.GameObject;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by user on 11/29/2017.
  */
-public class Meatboy implements Character {
-    private int[] pointsX = null;
-    private int[] pointsY = null;
-    //Arms right
-    private int[] armPointsRightX = null;
-    private int[] armPointsRightY = null;
-    //Arms left
-    private int[] armPointsLeftX = null;
-    private int[] armPointsLeftY = null;
+public class Meatboy implements GameCharacter {
     //Legs Y loc
     private int legsY = 0;
     private boolean actionLocked = false;
@@ -29,7 +21,7 @@ public class Meatboy implements Character {
     private Color[] cantCollide;
 
     //TODO FOR REVAMP
-    private HashMap<HashMap<Integer, Integer>, Color> irrelevantPoints;
+    private HashMap<HashMap<Integer, Integer>, Integer> irrelevantPoints;
     private HashMap<Integer, Integer> leftArm;
     private HashMap<Integer, Integer> rightArm;
 
@@ -49,21 +41,18 @@ public class Meatboy implements Character {
         g.fillRect(rightFootStart, startY, 8, 8);
         this.legsY = startY + 8;
         //Add the points to array
-        ArrayList<Integer> pointsX = new ArrayList<>();
-        ArrayList<Integer> pointsY = new ArrayList<>();
+        HashMap<Integer, Integer> points = new HashMap<>();
         for(int y=startY; y<(startY + 8); y++) {
             //Left foot points
             for(int xLeft=startX; xLeft<(startX + 8); xLeft++) {
                 if(canvas.getRGB(xLeft, y) == Color.RED.getRGB()) {
-                    pointsX.add(xLeft);
-                    pointsY.add(y);
+                    points.put(xLeft, y);
                 }
             }
             //Right foot points
             for(int xRight=rightFootStart; xRight<(rightFootStart + 8); xRight++) {
                 if(canvas.getRGB(xRight, y) == Color.RED.getRGB()) {
-                    pointsX.add(xRight);
-                    pointsY.add(y);
+                    points.put(xRight, y);
                 }
             }
         }
@@ -77,10 +66,13 @@ public class Meatboy implements Character {
         //Add the points to array
         for(int x=bodyStartX; x<(bodyStartX + 24); x++) {
             for(int y=bodyStartY; y<(bodyStartY + 24); y++) {
-                pointsX.add(x);
-                pointsY.add(y);
+                if(canvas.getRGB(x, y) == Color.RED.getRGB()) {
+                    points.put(x, y);
+                }
             }
         }
+        this.irrelevantPoints = new HashMap<>();
+        this.irrelevantPoints.put(points, Color.RED.getRGB());
 
 
         //Eyes
@@ -93,7 +85,17 @@ public class Meatboy implements Character {
         //Right
         g.drawRect(eyesStartX + 13, eyesStartY, 5, 5);
         g.fillRect(eyesStartX + 13, eyesStartY, 5, 5);
-        //Should be already counted by being within the body square? ^
+        //Add the points
+        HashMap<Integer, Integer> eyePoints = new HashMap<>();
+        for(int y=eyesStartY; y<(eyesStartY - 18); y++) {
+            for(int xLeft = eyesStartX; xLeft<(eyesStartX + 5); xLeft++) {
+                eyePoints.put(xLeft, y);
+            }
+            for(int xRight = (eyesStartX + 13); xRight<(eyesStartX + 13 + 5); xRight++) {
+                eyePoints.put(xRight, y);
+            }
+        }
+        this.irrelevantPoints.put(eyePoints, Color.BLACK.getRGB());
 
 
         //Arms
@@ -134,41 +136,39 @@ public class Meatboy implements Character {
         g.drawRect(topMouthStartX + 1, topMouthStartY + 3, 7, 2);
         g.setColor(Color.WHITE);
         g.fillRect(topMouthStartX + 1, topMouthStartY + 3, 7, 2);
-        //Should be already counted by being within the body square? ^
-
-
-        //Setup the arrays here
-        this.pointsX = new int[pointsX.size()];
-        this.pointsY = new int[pointsY.size()];
-        for(int i=0; i<pointsX.size(); i++) {
-            int x = pointsX.get(i);
-            int y = pointsY.get(i);
-            this.pointsX[i] = x;
-            this.pointsY[i] = y;
+        int bottomMouthX = topMouthStartX + 1;
+        int bottomMouthY = topMouthStartY + 3;
+        //Add to irrelevant arrays
+        HashMap<Integer, Integer> blackMouthPoints = new HashMap<>();
+        HashMap<Integer, Integer> whiteMouthPoints = new HashMap<>();
+        //Top
+        for(int y=topMouthStartY; y<(topMouthStartY+2); y++) {
+            for(int x=topMouthStartX; x<(topMouthStartX+9); x++) {
+                if(canvas.getRGB(x, y) == Color.BLACK.getRGB()) {
+                    blackMouthPoints.put(x, y);
+                } else {
+                    whiteMouthPoints.put(x, y);
+                }
+            }
         }
+        //Bottom
+        for(int y=bottomMouthY; y<(bottomMouthY+2); y++) {
+            for(int x=bottomMouthX; x<(bottomMouthX+9); x++) {
+                if(canvas.getRGB(x, y) == Color.BLACK.getRGB()) {
+                    blackMouthPoints.put(x, y);
+                } else {
+                    whiteMouthPoints.put(x, y);
+                }
+            }
+        }
+        this.irrelevantPoints.put(whiteMouthPoints, Color.WHITE.getRGB());
+        this.irrelevantPoints.put(blackMouthPoints, Color.BLACK.getRGB());
 
         //Arms arrays
         //Left
-        this.armPointsLeftX = new int[leftPoints.size()];
-        this.armPointsLeftY = new int[leftPoints.size()];
-        int index = 0;
-        for(int x : leftPoints.keySet()) {
-            int y = leftPoints.get(x);
-            this.armPointsLeftX[index] = x;
-            this.armPointsLeftY[index] = y;
-            index++;
-        }
-        //Reset index
-        index = 0;
+        this.leftArm = leftPoints;
         //Right
-        this.armPointsRightX = new int[rightPoints.size()];
-        this.armPointsRightY = new int[rightPoints.size()];
-        for(int x : rightPoints.keySet()) {
-            int y = rightPoints.get(x);
-            this.armPointsRightX[index] = x;
-            this.armPointsRightY[index] = y;
-            index++;
-        }
+        this.rightArm = rightPoints;
     }
 
     @Override
@@ -184,6 +184,7 @@ public class Meatboy implements Character {
         return false;
     }
 
+    /* TODO should be in an extendable class */
     @Override
     public boolean collides(Shape shape, int pixels) {
         return false;
@@ -198,11 +199,33 @@ public class Meatboy implements Character {
     public boolean collides(GameObject obj, int pixels) {
         return false;
     }
+    /**/
 
     @Override
     public void draw(Graphics g) {
         if(!this.hidden) {
+            //Reset arms
+            resetArms();
             //Draw it
+            for (HashMap<Integer, Integer> hashmap : this.irrelevantPoints.keySet()) {
+                int color = this.irrelevantPoints.get(hashmap);
+                for (int x : hashmap.keySet()) {
+                    int y = hashmap.get(x);
+                    canvas.setRGB(x, y, color);
+                    System.out.println("Drew line color: " + color);
+                }
+            }
+            g.setColor(Color.RED);
+            for (int x : this.leftArm.keySet()) {
+                int y = this.leftArm.get(x);
+                g.drawLine(x, y, x, y);
+                //System.out.println("Drew line color: RED");
+            }
+            for (int x : this.rightArm.keySet()) {
+                int y = this.rightArm.get(x);
+                g.drawLine(x, y, x, y);
+                //System.out.println("Drew line color: RED" );
+            }
         }
     }
 
@@ -222,17 +245,19 @@ public class Meatboy implements Character {
 
     @Override
     public int[] getPointsX() {
-        return this.pointsX;
+        //TODO
+        return null;
     }
 
     @Override
     public int[] getPointsY() {
-        return this.pointsY;
+        //TODO
+        return null;
     }
 
     @Override
     public boolean isActionLocked() {
-        return false;
+        return this.actionLocked;
     }
 
     @Override
@@ -250,6 +275,14 @@ public class Meatboy implements Character {
         this.speed = speed;
     }
 
+    private boolean armsMoved = false;
+    private int armsYedited = 0;
+    private int armsXedited = 0;
+    public void resetArms() {
+        if(this.armsMoved) {
+            //Reset the arms back to old positions
+        }
+    }
     @Override
     public void jump() {
         //
@@ -257,7 +290,30 @@ public class Meatboy implements Character {
 
     @Override
     public void moveRight() {
-        //
+        int moveRight = 5;
+        int moveLeftArmDown = 3;
+        int moveRightArmUp = 3;
+        //IrrelevantPoints
+        for(HashMap<Integer, Integer> hashmap : this.irrelevantPoints.keySet()) {
+            for (Iterator it = hashmap.keySet().iterator(); it.hasNext(); ) {
+                int x = (int) it.next();
+                int y = hashmap.get(x);
+                hashmap.put((x + moveRight), y);
+                it.remove();
+            }
+        }
+        //LeftArm
+        for (Iterator it = this.leftArm.keySet().iterator(); it.hasNext();) {
+            int x = (int) it.next();
+            int y = this.leftArm.get(x);
+            this.leftArm.put((x + moveRight), y); //Maybe make it go down a bit
+        }
+        //RightArm
+        for (Iterator it = this.rightArm.keySet().iterator(); it.hasNext();) {
+            int x = (int) it.next();
+            int y = this.rightArm.get(x);
+            this.rightArm.put((x + moveRight), y); //Maybe make it go up a bit
+        }
     }
 
     @Override
