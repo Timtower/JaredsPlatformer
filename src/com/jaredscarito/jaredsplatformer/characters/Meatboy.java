@@ -10,7 +10,7 @@ import java.util.Iterator;
 /**
  * Created by user on 11/29/2017.
  */
-public class Meatboy implements GameCharacter {
+public class Meatboy extends CharacterCollideable implements GameCharacter {
     //Legs Y loc
     private int legsY = 0;
     private boolean actionLocked = false;
@@ -178,28 +178,6 @@ public class Meatboy implements GameCharacter {
     public boolean isMoveable() {
         return this.isMoveable;
     }
-
-    @Override
-    public boolean collides(Shape shape) {
-        return false;
-    }
-
-    /* TODO should be in an extendable class */
-    @Override
-    public boolean collides(Shape shape, int pixels) {
-        return false;
-    }
-
-    @Override
-    public boolean collides(GameObject obj) {
-        return false;
-    }
-
-    @Override
-    public boolean collides(GameObject obj, int pixels) {
-        return false;
-    }
-    /**/
 
     @Override
     public void draw(Graphics g) {

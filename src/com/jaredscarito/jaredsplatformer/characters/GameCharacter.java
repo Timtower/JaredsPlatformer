@@ -55,17 +55,12 @@ public interface GameCharacter {
 
     void moveLeft();
 
+
     void show();
+
 
     void hide();
 
+
     void draw(Graphics g);
-
-    boolean collides(Shape shape);
-
-    boolean collides(Shape shape, int pixels);
-
-    boolean collides(GameObject obj);
-
-    boolean collides(GameObject obj, int pixels);
 }

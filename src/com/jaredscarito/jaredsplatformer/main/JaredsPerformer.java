@@ -21,7 +21,7 @@ public class JaredsPerformer extends DrawableAdapter {
     public static void main(String[] args) {
         gb.setSize(650, 500);
         canvas = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);
-        fillCanvas(Color.BLACK);
+        fillCanvas(Color.YELLOW);
         showGameBoard(gb);
     }
 

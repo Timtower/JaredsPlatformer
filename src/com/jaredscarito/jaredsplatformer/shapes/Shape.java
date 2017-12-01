@@ -20,12 +20,6 @@ public interface Shape {
     Color getColor();
 
 
-    boolean collides(Shape shape1, Shape shape2);
-
-
-    boolean collides(Shape shape1, Shape shape2, int pixels);
-
-
     void show();
 
 
